@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Airdrop Web 3 Testnet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+    :root {
+      --gold: #facc15;
+      --black: #121212;
+      --white: #ffffff;
+      --text-light: #ffffff;
+      --text-dark: #000000;
+      --transition: all 0.3s ease;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--white);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+      transition: var(--transition);
+      overflow-x: hidden;
+      position: relative;
+    }
+    body.dark {
+      background: var(--black);
+      color: var(--text-light);
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      backdrop-filter: blur(5px);
+    }
+    body.dark header {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--gold);
+    }
+    nav a {
+      color: var(--gold);
+      text-decoration: none;
+      margin: 0 0.5rem;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+      transform: translateY(-2px);
+    }
+    .toggle-wrapper {
+      position: relative;
+      width: 50px;
+      height: 24px;
+      background: var(--gold);
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .toggle-circle {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    body.dark .toggle-circle {
+      left: 28px;
+      background: var(--black);
+    }
+    .hero {
+      text-align: center;
+      padding: 4rem 1rem;
+      margin: 3rem auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      background: rgba(255,255,255,0.6);
+    }
+    body.dark .hero {
+      background: rgba(0,0,0,0.6);
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      color: var(--gold);
+    }
+    .hero p {
+      font-size: 1.0rem;
+      max-width: 800px;
+      margin: auto;
+      margin-top: 1rem;
+    }
+    section {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 2rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    body.dark section {
+      background: rgba(255,255,255,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      font-size: 36px;
+    }
+    .airdrop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Dua kolom seimbang */
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 40px; /* Jarak antar grid jika lebih dari 1 */
+    }
+    .airdrop-image img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .airdrop-grid img:hover {
+      transform: scale(1.05);
+    }
+    .airdrop-item{
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transform: translateY(0);
+    }
+    .airdrop-image {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transform: translateY(0);
+    }
+    .airdrop-image a {
+      display: block;
+      padding: 0.5rem;
+      background: var(--gold);
+      color: var(--black);
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      letter-spacing: 1px;
+    }
+    .airdrop-desc {
+      flex: 1;
+      padding: 1rem;
+      text-align: justify;
+    }
+    .airdrop-desc h3 {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .airdrop-desc p {
+      margin-top: 0.5rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .form-group textarea {
+      height: 150px;
+    }
+    .form-submit {
+      background: var(--gold);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .contact-icons {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      font-size: 2rem;
+    }
+    .contact-icons a {
+      color: var(--gold);
+      transition: var(--transition);
+    }
+    .contact-icons a:hover {
+      transform: scale(1.2);
+    }
+    .blog-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Dua kolom seimbang */
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 40px; /* Jarak antar grid jika lebih dari 1 */
+    }
+    .blog-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transform: translateY(0);
+    }
+    .blog-item img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .blog-item a {
+      display: block;
+      padding: 0.5rem;
+      background: var(--gold);
+      color: var(--black);
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: var(--transition);
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="chainCanvas"></canvas>
+  <header>
+    <div class="logo">Airdrop Web 3<br>Testnet</div>
+    <nav>
+      <a href="#Airdrop">Testnet</a>
+      <a href="#blog">Blog</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+    <div class="toggle-wrapper" onclick="toggleMode()">
+      <div class="toggle-circle"></div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Definisi Airdrop Web 3 & Testnet</h1>
+    <p><strong>Airdrop Web 3</strong> adalah distribusi token gratis dari proyek blockchain kepada pengguna sebagai promosi atau bentuk reward. Biasanya diberikan kepada pengguna yang aktif mencoba fitur, bergabung ke komunitas, atau membantu promosi sosial.</p>
+    <p><strong>Web 3 Testnet</strong> adalah jaringan simulasi untuk uji coba fitur dari proyek blockchain sebelum dirilis ke mainnet. Token di testnet tidak bernilai nyata tapi partisipasi aktif bisa membuka peluang airdrop.</p>
+  </section>
+
+  <section>
+    <h2>Airdrop Testnet</h2>
+    <div class="airdrop-grid">
+        <div class="airdrop-item">
+            <div class="airdrop-image">
+                <img src="pharos.png" alt="Pharos Testnet">
+                <a href="file:///D:/Codingan%20Webpages/WEB3/MAIN%20WEBPAGES/Webpage%20-%20Pharos/Pharos%20Main%20Webpage%20html.html" target="blank">Pharos Testnet</a>
+            </div>
+            <div class="airdrop-desc">
+                <p>Pharos adalah platform Web3 yang menyediakan framework otomasi untuk bot testnet. Pengguna dapat menjalankan tugas harian seperti check-in, faucet, dan verifikasi sosial melalui CLI. Proyek ini sangat ramah untuk developer dan point farmer.</p>
+                <p>Pharos juga membuka peluang airdrop kepada kontributor aktif dengan sistem reward berbasis aktivitas testnet.</p>
+            </div>
+        </div>
+        <div class="airdrop-item">
+            <div class="airdrop-image">
+                <img src="oroswap.png" alt="Oroswap Testnet">
+                <a href="file:///D:/Codingan%20Webpages/WEB3/MAIN%20WEBPAGES/Webpage%20-%20Pharos/Oroswap%20Main%20Webpage%20html.html" target=" _self">Oroswap Testnet</a>
+            </div>
+            <div class="airdrop-desc">
+                <p>Oroswap adalah DEX testnet dengan antarmuka sederhana dan performa tinggi. Di testnet, pengguna bisa mencoba swap token, menambahkan likuiditas, dan mendapatkan pengalaman seperti di mainnet.</p>
+                <p>Kontribusi dan testing aktif akan diperhitungkan untuk potensi airdrop saat proyek rilis resmi.</p>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section id="blog">
+    <h2>Blog</h2>
+    <div class="blog-grid">
+      <div class="blog-item">
+        <img src="BMW.jpg">
+        <a href="facebook.com">Airdrop Retroactive</a>
+      </div>
+      <div class="blog-item">
+        <img src="bmw m3.jpg"> 
+        <a href="instagram.com">Airdrop Telegram Minigame</a>
+      </div>
+      <div class="blog-item">
+        <img src="pharos.png">
+        <a href="youtube.com">Tools Garap Airdrop</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="kontak">
+    <h2>Hubungi Kami</h2>
+    <form>
+      <div class="form-group">
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" name="nama" placeholder="Nama Anda">
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="email@contoh.com">
+      </div>
+      <div class="form-group">
+        <label for="pesan">Pesan</label>
+        <textarea id="pesan" name="pesan" placeholder="Tulis pesan Anda di sini..."></textarea>
+      </div>
+      <button type="submit" class="form-submit">Kirim</button>
+    </form>
+    <div class="contact-icons">
+      <a href="wa.me/6285802475283" target="whatsapp.com"><i class="fab fa-whatsapp"></i></a>
+      <a href="t.me/Oxgodzilla" target="blank"><i class="fab fa-telegram"></i></a>
+      <a href="#"><i class="fab fa-discord"></i></a>
+      <a href="#"><i class="fas fa-envelope"></i></a>
+    </div>
+  </section>
+
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle('dark');
+    }
+    const canvas = document.getElementById('chainCanvas');
+    const ctx = canvas.getContext('2d');
+    let chains = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 100; i++) {
+      chains.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 20 + 15,
+        speed: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.5 + 0.3,
+        sway: Math.random() * 0.2 - 0.1
+      });
+    }
+
+    function drawChains() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = document.body.classList.contains('dark') ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+      chains.forEach(c => {
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = c.opacity;
+        ctx.beginPath();
+        ctx.moveTo(c.x, c.y);
+        for (let i = 0; i < 5; i++) {
+          const nextX = c.x + c.size + Math.sin(Date.now() * 0.001) * c.sway * 10;
+          const nextY = c.y + c.size;
+          ctx.lineTo(nextX, nextY);
+          c.x = nextX;
+          c.y = nextY;
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        c.y -= c.speed;
+        c.x += c.sway;
+        if (c.y < -100 || c.x > canvas.width + 100 || c.x < -100) {
+          c.y = canvas.height + 100;
+          c.x = Math.random() * canvas.width;
+        }
+      });
+      requestAnimationFrame(drawChains);
+    }
+    drawChains();
+  </script>
+</body>
+</html>
